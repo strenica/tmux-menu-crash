@@ -1,0 +1,19 @@
+--- a/menu.c	2026-10-26 20:35:08.880336990 +0100
++++ b/menu.c	2026-10-26 20:35:08.880336990 +0100
+@@ -489,8 +489,16 @@
+ 		return (1);
+ 	}
+ 	if (md->cb != NULL) {
+-	    md->cb(md->menu, md->choice, item->key, md->data);
++	    menu_choice_cb cb = md->cb;
++
++	    /*
++	     * Clear the callback first: the callback may open a status
++	     * prompt, and status_prompt_set() clears the client overlay
++	     * (this menu) and calls menu_free_cb(), which would invoke
++	     * md->cb a second time and then use md after it is freed.
++	     */
+ 	    md->cb = NULL;
++	    cb(md->menu, md->choice, item->key, md->data);
+ 	    return (1);
+ 	}
