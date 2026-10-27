@@ -7,6 +7,18 @@ Deterministic, no configuration or plugins required.
 Confirmed on **tmux 3.5a** (Debian 13) and **tmux 3.7c**
 (Debian trixie-backports).
 
+> **Fixed upstream:** [tmux/tmux#5810](https://github.com/tmux/tmux/issues/5810) ·
+> [commit 4054188d](https://github.com/tmux/tmux/commit/4054188dc6ef82562ed0e2a18be6c0b1dff5c496)
+> ("Reset menu callback before firing to stop crash when killing window",
+> 2026-10-27).
+
+## Result
+
+- Stock tmux 3.5a / 3.7c: `./repro.py /usr/bin/tmux` → server SIGSEGV (exit 1)
+- With `menu-reentrancy.patch`: kill prompt appears, `y` kills the session,
+  server survives (exit 0)
+- Upstream uses the same fix: clear the menu callback before invoking it
+
 ## Reproduce
 
 ```sh
